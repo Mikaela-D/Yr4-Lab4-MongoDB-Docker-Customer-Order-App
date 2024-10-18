@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Service
 public class OrderService {
-
     private final OrderRepository orderRepository;
 
     @Autowired
@@ -25,14 +24,32 @@ public class OrderService {
     }
 
     public Order createOrder(Order order) {
+        // Check if customerId is provided
+        if (order.getCustomerId() == null || order.getCustomerId().isEmpty()) {
+            throw new IllegalArgumentException("Customer ID must be provided");
+        }
+
         return orderRepository.save(order);
     }
 
-    public boolean orderExists(String id) {
-        return orderRepository.existsById(id);
+    public Order updateOrder(String id, Order order) {
+        Optional<Order> orderOptional = orderRepository.findById(id);
+        if (!orderOptional.isPresent()) {
+            throw new RuntimeException("Order not found");
+        }
+        Order existingOrder = orderOptional.get();
+        existingOrder.setOrderCode(order.getOrderCode());
+        existingOrder.setOrderDate(order.getOrderDate());
+        existingOrder.setOrderDetails(order.getOrderDetails());
+
+        return orderRepository.save(existingOrder);
     }
 
-    public void deleteOrder(String id) {
-        orderRepository.deleteById(id);
+    public boolean deleteOrder(String orderId) {
+        if (orderRepository.existsById(orderId)) {
+            orderRepository.deleteById(orderId);
+            return true;
+        }
+        return false;
     }
 }

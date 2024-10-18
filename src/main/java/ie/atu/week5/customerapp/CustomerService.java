@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Service
 public class CustomerService {
-
     private final CustomerRepository customerRepository;
 
     @Autowired
@@ -19,20 +18,27 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
-
-    public Optional<Customer> getCustomerById(String id) {
+    public Optional<Customer> getAllCustomerById(String id) {
         return customerRepository.findById(id);
     }
-
     public Customer createCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
-
-    public boolean customerExists(String id) {
-        return customerRepository.existsById(id);
+    public Customer updateCustomer(String id, Customer customer) {
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        if (!customerOptional.isPresent()) {
+            throw new RuntimeException("Customer not found");
+        }
+        Customer existingCustomer = customerOptional.get();
+        existingCustomer.setName(customer.getName());
+        existingCustomer.setEmail(customer.getEmail());
+        return customerRepository.save(existingCustomer);
     }
-
-    public void deleteCustomer(String id) {
-        customerRepository.deleteById(id);
+    public boolean deleteCustomer(String id) {
+        if (customerRepository.existsById(id)) {
+            customerRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
