@@ -1,0 +1,19 @@
+
+CustomerController
+
+GET /customers
+GET /customers/{id}
+POST /customers
+PUT /customers/{id}
+DELETE /customers/{id}
+
+OrderController
+
+GET /orders
+GET /orders/customer/{customerId}
+POST /orders
+PUT /orders/{id}
+DELETE /orders/{id}
+
+CustomerOrderController
+POST /api/customer-with-orders
